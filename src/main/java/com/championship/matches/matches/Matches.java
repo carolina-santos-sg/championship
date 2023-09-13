@@ -1,5 +1,7 @@
 package com.championship.matches.matches;
 
+import com.championship.championships.championships.Championship;
+import com.championship.teams.teams.Teams;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,11 +19,13 @@ public class Matches {
     @Column(name = "id")
     private int matchId;
 
-    @Column(name = "home_team")
-    private String homeTeam;
+    @OneToOne
+    @JoinColumn(name = "home_team")
+    private Teams homeTeamId;
 
-    @Column(name = "visiting_team")
-    private String visitingTeam;
+    @OneToOne
+    @JoinColumn(name = "visiting_team")
+    private Teams visitingTeamId;
 
     @Column(name = "home_team_goals")
     private int homeTeamGoals;
@@ -29,8 +33,9 @@ public class Matches {
     @Column(name = "visiting_team_goals")
     private int visitingTeamGoals;
 
-    @Column(name = "championship")
-    private String championship;
+    @ManyToOne
+    @JoinColumn(name = "championship_id")
+    private Championship championshipId;
 
     @Column(name = "match_date")
     private Date matchDate = new Date();
