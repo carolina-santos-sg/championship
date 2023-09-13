@@ -10,10 +10,11 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "teams")
 public class Teams {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue (strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private int teamId;
+    private Integer teamId;
 
     @Column(name = "team_name")
     private String teamName;

@@ -22,7 +22,7 @@ public class ClassificationsTable {
     @JoinColumn(name = "team")
     private Teams team;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "championship_id")
     private Championship championshipId;
 
