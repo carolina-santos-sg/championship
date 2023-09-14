@@ -1,17 +1,19 @@
 package com.championship.teams.APIs;
 
-import com.championship.teams.repository.TeamRepository;
 import com.championship.teams.service.TeamService;
 import com.championship.teams.teams.Teams;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/team")
 public class TeamsAPI {
-    private Teams team;
-    private TeamService teamService;
+    private final TeamService teamService;
+
+    public TeamsAPI(TeamService teamService) {
+        this.teamService = teamService;
+    }
+
 
     @GetMapping("/list")
     public ResponseEntity<Object> listTeams(){ return ResponseEntity.ok(this.teamService.listTeams()); }

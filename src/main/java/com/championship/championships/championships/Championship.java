@@ -15,7 +15,7 @@ public class Championship {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private int championshipId;
+    private Integer championshipId;
 
     @Column(name = "championship_name")
     private String championshipName;

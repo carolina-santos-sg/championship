@@ -17,7 +17,7 @@ public class Matches {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private int matchId;
+    private Integer matchId;
 
     @OneToOne
     @JoinColumn(name = "home_team")

@@ -16,7 +16,7 @@ public class ClassificationsTable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private int classificationTableId;
+    private Integer classificationTableId;
 
     @ManyToOne
     @JoinColumn(name = "team")
