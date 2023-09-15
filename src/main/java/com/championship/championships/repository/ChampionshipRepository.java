@@ -26,4 +26,16 @@ public interface ChampionshipRepository extends JpaRepository<Championship, Inte
                          " FROM championship c " +
                          " WHERE c.id  = :championshipId ")
     boolean championshipFinishedById(@Param("championshipId") Integer championshipId);
+
+    @Query(nativeQuery = true,
+                 value = " SELECT COUNT(*) " +
+                         " FROM classifications_table ct " +
+                         " WHERE ct.championship_id = :championshipId")
+    Integer countByChampionshipId(@Param("championshipId") Integer championshipId);
+
+    @Query(nativeQuery = true,
+                 value = " SELECT COUNT(*) " +
+                         " FROM matches m " +
+                         " WHERE m.championship_id = :championshipId ")
+    Integer countByMatches(@Param("championshipId") Integer championshipId);
 }

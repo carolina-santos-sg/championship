@@ -1,26 +1,22 @@
 package com.championship.matches.dto;
 
-import com.championship.championships.championships.Championship;
-import com.championship.teams.teams.Teams;
+import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.criteria.CriteriaBuilder;
+import java.util.Calendar;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
 public class MatchesDto {
+
     private Integer homeTeamId;
 
     private Integer visitingTeamId;
 
     private Integer championshipId;
 
-    private Date matchDate = new Date();
+    private Calendar matchDate = Calendar.getInstance();
 
 }

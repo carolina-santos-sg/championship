@@ -1,5 +1,6 @@
 package com.championship.classificationsTable.APIs;
 
+import com.championship.classificationsTable.classificationsTable.ClassificationsTable;
 import com.championship.classificationsTable.dto.ListTeamsDto;
 import com.championship.classificationsTable.service.ClassificationTableService;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,4 @@ public class ClassificationTableAPI {
         return ResponseEntity.ok(this.classificationTableService.listClassificationTable());
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Object> createClassificationTable(@RequestBody ListTeamsDto listTeamsDto){
-        return ResponseEntity.ok(this.classificationTableService.createClassificationTable(listTeamsDto));
-    }
 }

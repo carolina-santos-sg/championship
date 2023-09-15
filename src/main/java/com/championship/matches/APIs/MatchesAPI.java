@@ -25,6 +25,12 @@ public class MatchesAPI {
         return ResponseEntity.ok(this.matchesService.createMatch(matchDto));
     }
 
+    @PutMapping("/start/{id}")
+    public void startMatch(@PathVariable("id") Integer matchId){this.matchesService.startMatch(matchId);};
+
+    @PutMapping("/finish/{id}")
+    public void finishMatch(@PathVariable("id") Integer matchId){this.matchesService.finishMatch(matchId);};
+
     @DeleteMapping("/delete/{id}")
     public void deleteMatch(@PathVariable("id") Integer matchId){
         this.matchesService.deleteMatch(matchId);

@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.Calendar;
 
 @Entity
 @Data
@@ -38,7 +38,7 @@ public class Matches {
     private Championship championshipId;
 
     @Column(name = "match_date")
-    private Date matchDate = new Date();
+    private Calendar matchDate = Calendar.getInstance();
 
     @Column(name = "started")
     private boolean started;
