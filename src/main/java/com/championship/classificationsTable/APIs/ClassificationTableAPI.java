@@ -1,7 +1,5 @@
 package com.championship.classificationsTable.APIs;
 
-import com.championship.classificationsTable.classificationsTable.ClassificationsTable;
-import com.championship.classificationsTable.dto.ListTeamsDto;
 import com.championship.classificationsTable.service.ClassificationTableService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/classificationtable")
 public class ClassificationTableAPI {
     private final ClassificationTableService classificationTableService;
-//    private ClassificationTableDto classificationTableDto;
+
 
     public ClassificationTableAPI(ClassificationTableService classificationTableService) {
         this.classificationTableService = classificationTableService;

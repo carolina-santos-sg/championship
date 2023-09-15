@@ -2,6 +2,7 @@ package com.championship.championships.service;
 
 import com.championship.championships.championships.Championship;
 import com.championship.championships.repository.ChampionshipRepository;
+import com.championship.classificationsTable.classificationsTable.ClassificationsTable;
 import com.championship.classificationsTable.dto.ListTeamsDto;
 import com.championship.classificationsTable.service.ClassificationTableService;
 
@@ -36,10 +37,16 @@ public class ChampionshipService {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
 
+        championship.setChampionshipName(championship.getChampionshipName().toUpperCase());
+
         if (championship.getChampionshipYear() < year){ throw new RuntimeException("Só é permitido criar campeonato no ano atual em diante!"); }
         if (this.championshipRepository.countChampionshipsByChampionshipYearAndChampionshipName(year, championship.getChampionshipName())){
             throw new RuntimeException("Não é permitido criar um campeonato com mesmo nome e ano!");
         }
+
+        championship.setChampionshipStarted(false);
+        championship.setChampionshipFinished(false);
+
 
         return this.championshipRepository.save(championship);
     }
@@ -50,12 +57,16 @@ public class ChampionshipService {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
 
+
+
         Championship championship1 = this.championshipRepository.findById(id).orElseThrow(() -> new RuntimeException("Campeonato não encontrado!"));
+        championship1.setChampionshipName(championship1.getChampionshipName().toUpperCase());
+
         if (championship.getChampionshipYear() > 0){
             championship1.setChampionshipYear(championship.getChampionshipYear());
         }
         if (Objects.nonNull(championship.getChampionshipName())){
-            championship1.setChampionshipName(championship.getChampionshipName());
+            championship1.setChampionshipName(championship.getChampionshipName().toUpperCase());
         }
 
         if (championship1.getChampionshipYear() < year){ throw new RuntimeException("Só é permitido criar campeonato no ano atual em diante!"); }
@@ -101,4 +112,5 @@ public class ChampionshipService {
             throw new RuntimeException("Ainda há partidas para acontecer antes de encerrar o campeonato!");
         }
     }
+
 }

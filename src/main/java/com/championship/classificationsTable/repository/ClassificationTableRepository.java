@@ -12,8 +12,16 @@ public interface ClassificationTableRepository extends JpaRepository<Classificat
 
     @Query(nativeQuery = true,
                  value = " SELECT * " +
-                         " FROM classifications_table c " +
-                         " WHERE c.team = :teamId AND c.championship_id = :championshipId ")
+                         " FROM classifications_table ct " +
+                         " WHERE ct.team = :teamId AND ct.championship_id = :championshipId ")
     ClassificationsTable selectByTeamAndChampionshipId(@Param("teamId") Integer teamId,
-                                         @Param("championshipId") Integer championshipId);
+                                                       @Param("championshipId") Integer championshipId);
+
+    @Query(nativeQuery = true,
+                 value = " SELECT ct.id " +
+                         " FROM classifications_table ct " +
+                         " WHERE ct.championship_id = :championshipId" +
+                         " AND ct.team = :teamId ")
+    Integer selectClassificationTableIdByTeamIdAndChampionshipId(@Param("championshipId") Integer championshipId,
+                                                                 @Param("teamId") Integer teamId);
 }

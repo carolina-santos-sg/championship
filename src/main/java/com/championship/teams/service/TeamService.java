@@ -31,6 +31,8 @@ public class TeamService { ;
             throw new RuntimeException("Time já registrado!");
         }
 
+        team.setTeamName(team.getTeamName().toUpperCase());
+
         return this.teamRepository.save(team);
     }
 
@@ -43,11 +45,14 @@ public class TeamService { ;
 
     //ATUALIZAR
     @Transactional
-    public Teams updateTeam(Teams team){
-        Teams team1 = new Teams();
+    public Teams updateTeam(Integer teamId){
+        Teams team1 = this.teamRepository.findById(teamId).get();
 
-        if(Objects.nonNull(team.getTeamName())){
-            team1.setTeamName(team.getTeamName());
+        if(Objects.nonNull(team1.getTeamName())){
+            team1.setTeamName(team1.getTeamName().toUpperCase());
+        }
+        if (this.teamRepository.countByTeamName(team1.getTeamName())){
+            throw new RuntimeException("Time já registrado!");
         }
 
         return this.teamRepository.save(team1);

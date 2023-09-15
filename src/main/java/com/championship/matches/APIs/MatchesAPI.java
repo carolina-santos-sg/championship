@@ -26,14 +26,15 @@ public class MatchesAPI {
     }
 
     @PutMapping("/start/{id}")
-    public void startMatch(@PathVariable("id") Integer matchId){this.matchesService.startMatch(matchId);};
+    public ResponseEntity<Object> startMatch(@PathVariable("id") Integer matchId){
+        this.matchesService.startMatch(matchId);
+        return ResponseEntity.ok("A partida começou!");
+    }
 
     @PutMapping("/finish/{id}")
-    public void finishMatch(@PathVariable("id") Integer matchId){this.matchesService.finishMatch(matchId);};
-
-    @DeleteMapping("/delete/{id}")
-    public void deleteMatch(@PathVariable("id") Integer matchId){
-        this.matchesService.deleteMatch(matchId);
+    public ResponseEntity<Object> finishMatch(@PathVariable("id") Integer matchId){
+        this.matchesService.finishMatch(matchId);
+        return ResponseEntity.ok("Partida encerrada!");
     }
 
     @PutMapping("/matchResult/{id}")

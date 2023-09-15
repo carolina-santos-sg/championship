@@ -74,13 +74,14 @@ public class MatchesService {
         return ResponseEntity.ok(this.matchesRepository.save(match));
     }
 
-    public void deleteMatch(Integer matchId){
-        this.matchesRepository.deleteById(matchId);
-    }
-
     @Transactional
     public void startMatch(Integer matchId) {
         Matches match = this.matchesRepository.findById(matchId).get();
+
+        if (match.isStarted()){
+            throw new RuntimeException("Não se pode começar uma partida já iniciada.");
+        }
+
         match.setStarted(true);
         this.matchesRepository.save(match);
     }
@@ -88,6 +89,11 @@ public class MatchesService {
     @Transactional
     public void finishMatch(Integer matchId) {
         Matches match = this.matchesRepository.findById(matchId).get();
+
+        if (match.isFinished()){
+            throw new RuntimeException("Não se pode encerrar uma partida já finalizada.");
+        }
+
         match.setFinished(true);
         this.matchesRepository.save(match);
 

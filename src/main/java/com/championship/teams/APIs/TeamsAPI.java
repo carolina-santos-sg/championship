@@ -22,4 +22,12 @@ public class TeamsAPI {
     public ResponseEntity<Object> registerTeam(@RequestBody Teams team){
         return ResponseEntity.ok(this.teamService.registerTeam(team));
     }
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteTeam(@PathVariable("id") Integer teamId){this.teamService.deleteTeam(teamId);}
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Object> updateTeam(@PathVariable("id") Integer teamId){
+        return ResponseEntity.ok(this.teamService.updateTeam(teamId));
+    }
 }

@@ -58,6 +58,6 @@ public class ClassificationTableService {
 
             this.classificationTableRepository.save(classificationTable);
         }
-
     }
+
 }
