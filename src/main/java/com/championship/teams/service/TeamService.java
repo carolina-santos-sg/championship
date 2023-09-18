@@ -20,6 +20,10 @@ public class TeamService { ;
     //LISTAR TIMES
     public ResponseEntity<Object> listTeams(){ return ResponseEntity.ok(this.teamRepository.findAll()); }
 
+//    public void listByTeamId(Integer teamId){
+//        this.teamRepository.listByTeamId(teamId);
+//    }
+
     //REGISTRAR TIMES
     @Transactional
     public Teams registerTeam(Teams team){
@@ -38,6 +42,10 @@ public class TeamService { ;
 
     //DELETAR
     public void deleteTeam(Integer id){
+        if (this.teamRepository.countByChampionshipIdAndMatches(id)){
+            throw new RuntimeException("Não é possível deletar esse time");
+        }
+
         Teams team = this.teamRepository.findById(id).get();
 
         this.teamRepository.delete(team);
@@ -47,6 +55,10 @@ public class TeamService { ;
     @Transactional
     public Teams updateTeam(Integer teamId){
         Teams team1 = this.teamRepository.findById(teamId).get();
+
+        if(this.teamRepository.countByStartedChampionship(teamId)){
+            throw new RuntimeException("Não é possível fazer a alteração, pois o time está participando de um campeonato que já começou.");
+        }
 
         if(Objects.nonNull(team1.getTeamName())){
             team1.setTeamName(team1.getTeamName().toUpperCase());

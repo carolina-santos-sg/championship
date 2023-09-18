@@ -19,4 +19,8 @@ public class ClassificationTableAPI {
         return ResponseEntity.ok(this.classificationTableService.listClassificationTable());
     }
 
+    @GetMapping("/listbyid/{id}")
+    public void listById(@PathVariable("id") Integer championshipId){
+        this.classificationTableService.listById(championshipId);
+    }
 }

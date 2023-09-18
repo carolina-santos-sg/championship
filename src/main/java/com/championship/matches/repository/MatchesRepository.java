@@ -13,13 +13,20 @@ public interface MatchesRepository extends JpaRepository<Matches, Integer> {
 
     @Query(nativeQuery = true,
                  value = " SELECT COUNT(*) > 0 " +
-                         "FROM matches m " +
-                         "WHERE home_team = :homeTeamId " +
-                         "AND visiting_team = :visitingTeamId " +
-                         "AND championship_id = :championshipId ")
+                         " FROM matches m " +
+                         " WHERE home_team = :homeTeamId " +
+                         " AND visiting_team = :visitingTeamId " +
+                         " AND championship_id = :championshipId ")
     boolean countByTeamsAndChampionshipId(@Param("homeTeamId") Integer homeTeamId,
                                           @Param("visitingTeamId") Integer visitingTeamId,
                                           @Param("championshipId") Integer championshipId);
+    @Query(nativeQuery = true,
+                 value = " SELECT COUNT(*) > 0 " +
+                         " FROM matches m " +
+                         " WHERE home_team = :homeTeamId " +
+                         " AND visiting_team = :visitingTeamId ")
+    boolean countByTeams(@Param("homeTeamId") Integer homeTeamId,
+                                          @Param("visitingTeamId") Integer visitingTeamId);
 
     @Query(nativeQuery = true,
                  value = " SELECT COUNT(*) > 0 " +
@@ -29,4 +36,11 @@ public interface MatchesRepository extends JpaRepository<Matches, Integer> {
     boolean countDateByMatch(@Param("matchDate") Calendar matchDate,
                              @Param("teamId") Integer teamId);
 
+    @Query(nativeQuery = true,
+                 value = " SELECT COUNT(*) > 0 " +
+                         " FROM classifications_table ct  " +
+                         " WHERE ct.championship_id = :championshipId " +
+                         " AND ct.team = :teamId  ")
+    boolean countByChampionshipIdAndTeamId(@Param("championshipId") Integer championship,
+                                           @Param("teamId") Integer teamId);
 }

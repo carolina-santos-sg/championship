@@ -18,6 +18,9 @@ public class TeamsAPI {
     @GetMapping("/list")
     public ResponseEntity<Object> listTeams(){ return ResponseEntity.ok(this.teamService.listTeams()); }
 
+//    @GetMapping("/listbyid/{id}")
+//    public void listById(@PathVariable("id") Integer teamId){this.teamService.listByTeamId(teamId);}
+
     @PostMapping("/register")
     public ResponseEntity<Object> registerTeam(@RequestBody Teams team){
         return ResponseEntity.ok(this.teamService.registerTeam(team));

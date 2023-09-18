@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 public interface ChampionshipRepository extends JpaRepository<Championship, Integer> {
 
     @Query(nativeQuery = true,
-                 value = "SELECT COUNT(*) > 0 " +
-                         "FROM championship c " +
-                         "WHERE championship_year  > :year AND championship_name = :championshipName ")
+                 value = " SELECT COUNT(*) > 0 " +
+                         " FROM championship c " +
+                         " WHERE championship_year  > :year AND championship_name = :championshipName ")
     boolean countChampionshipsByChampionshipYearAndChampionshipName(@Param("year") Integer year,
                                                                          @Param("championshipName") String championshipName);
 
@@ -38,4 +38,12 @@ public interface ChampionshipRepository extends JpaRepository<Championship, Inte
                          " FROM matches m " +
                          " WHERE m.championship_id = :championshipId ")
     Integer countByMatches(@Param("championshipId") Integer championshipId);
+
+//    @Query(nativeQuery = true,
+//                 value = "SELECT * " +
+//                         "FROM championship c " +
+//                         "JOIN classifications_table ct ON c.id = ct.championship_id " +
+//                         "WHERE c.id = :championshipId " +
+//                         "ORDER BY points DESC ")
+//        void listChampionshipById(@Param("championshipId") Integer championshipId);
 }

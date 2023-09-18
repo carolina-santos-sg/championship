@@ -23,6 +23,9 @@ public class ChampionshipAPI {
         return ResponseEntity.ok(this.championshipService.listChampionship());
     }
 
+//    @GetMapping("/listbyid/{id}")
+//    public void listById(@PathVariable("id") Integer id){this.championshipService.listById(id);}
+
     @PostMapping("/register")
     public ResponseEntity<Object> registerChampionship(@RequestBody Championship championship){
         return ResponseEntity.ok(this.championshipService.registerChampionship(championship));
@@ -43,5 +46,11 @@ public class ChampionshipAPI {
     public ResponseEntity<Object> finishChampionship(@PathVariable("id") Integer championshipId){
         this.championshipService.finishChampionship(championshipId);
         return ResponseEntity.ok("Campeonato finalizado!");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> deleteChampionship(@PathVariable("id") Integer championshipId){
+        this.championshipService.deleteChampionship(championshipId);
+        return ResponseEntity.ok("Campeonato deletado.");
     }
 }

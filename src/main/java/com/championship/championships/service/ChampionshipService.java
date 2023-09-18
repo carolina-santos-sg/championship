@@ -2,7 +2,6 @@ package com.championship.championships.service;
 
 import com.championship.championships.championships.Championship;
 import com.championship.championships.repository.ChampionshipRepository;
-import com.championship.classificationsTable.classificationsTable.ClassificationsTable;
 import com.championship.classificationsTable.dto.ListTeamsDto;
 import com.championship.classificationsTable.service.ClassificationTableService;
 
@@ -30,6 +29,8 @@ public class ChampionshipService {
     public ResponseEntity<Object> listChampionship(){
         return ResponseEntity.ok(this.championshipRepository.findAll());
     }
+
+//    public void listById(Integer championshipId){this.championshipRepository.listChampionshipById(championshipId);}
 
     //REGISTRAR
     @Transactional
@@ -65,15 +66,21 @@ public class ChampionshipService {
         if (championship.getChampionshipYear() > 0){
             championship1.setChampionshipYear(championship.getChampionshipYear());
         }
+
         if (Objects.nonNull(championship.getChampionshipName())){
             championship1.setChampionshipName(championship.getChampionshipName().toUpperCase());
         }
 
-        if (championship1.getChampionshipYear() < year){ throw new RuntimeException("Só é permitido criar campeonato no ano atual em diante!"); }
-        if (this.championshipRepository.countChampionshipsByChampionshipYearAndChampionshipName(year, championship.getChampionshipName())){
+        if (championship1.getChampionshipYear() < year){
+            throw new RuntimeException("Só é permitido criar campeonato no ano atual em diante!"); }
+
+        if (this.championshipRepository.countChampionshipsByChampionshipYearAndChampionshipName(year, championship.getChampionshipName().toUpperCase())){
             throw new RuntimeException("Não é permitido criar um campeonato com mesmo nome e ano!");
         }
 
+        if (championship1.isChampionshipStarted()) {
+            throw new RuntimeException("Não é permitido alterar um campeonato que já começou.");
+        }
 
         return this.championshipRepository.save(championship1);
     }
@@ -111,6 +118,16 @@ public class ChampionshipService {
         if (possibleMatches != matchesPlayed){
             throw new RuntimeException("Ainda há partidas para acontecer antes de encerrar o campeonato!");
         }
+    }
+
+    public void deleteChampionship(Integer championshipId){
+        Championship championship = this.championshipRepository.findById(championshipId).orElseThrow(() -> new RuntimeException("Campeonato não encontrado."));
+
+        if (championship.isChampionshipStarted()){
+            throw new RuntimeException("Esse campeonato não pode ser deletado.");
+        }
+
+        this.championshipRepository.deleteById(championshipId);
     }
 
 }

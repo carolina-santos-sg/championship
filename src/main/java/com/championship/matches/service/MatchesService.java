@@ -44,14 +44,15 @@ public class MatchesService {
         if (matchDto.getHomeTeamId().equals(matchDto.getVisitingTeamId())){
             throw new RuntimeException("Um time não pode disputar uma partida contra si mesmo!"); }
 
+        if (!this.matchesRepository.countByChampionshipIdAndTeamId(matchDto.getChampionshipId(),matchDto.getHomeTeamId())
+                || !this.matchesRepository.countByChampionshipIdAndTeamId(matchDto.getChampionshipId(), matchDto.getVisitingTeamId())){
+            throw new RuntimeException("Não se pode realizar jogos entre times de campeonatos diferentes");
+        }
+
 
         //validações - campeonato
         if(Objects.nonNull(matchDto.getChampionshipId())) {
             //validações - jogos de ida e volta
-            if (this.matchesRepository.countByTeamsAndChampionshipId(matchDto.getHomeTeamId(), matchDto.getVisitingTeamId(), matchDto.getChampionshipId())
-                    || this.matchesRepository.countByTeamsAndChampionshipId(matchDto.getVisitingTeamId(), matchDto.getHomeTeamId(), matchDto.getChampionshipId())) {
-                throw new RuntimeException("Essa partida já aconteceu!");
-            }
             if (this.matchesRepository.countByTeamsAndChampionshipId(matchDto.getHomeTeamId(), matchDto.getVisitingTeamId(), matchDto.getChampionshipId())
                     && this.matchesRepository.countByTeamsAndChampionshipId(matchDto.getVisitingTeamId(), matchDto.getHomeTeamId(), matchDto.getChampionshipId())) {
                 throw new RuntimeException("As partidas de ida e volta já aconteceram!");
@@ -61,6 +62,9 @@ public class MatchesService {
             }
         }
 
+        if (this.matchesRepository.countByTeams(matchDto.getHomeTeamId(), matchDto.getVisitingTeamId())) {
+            throw new RuntimeException("Essa partida já aconteceu!");
+        }
 
         //validação - datas
         dateValidations(matchDto);
@@ -76,7 +80,7 @@ public class MatchesService {
 
     @Transactional
     public void startMatch(Integer matchId) {
-        Matches match = this.matchesRepository.findById(matchId).get();
+        Matches match = this.matchesRepository.findById(matchId).orElseThrow(() -> new RuntimeException("Essa partida não existe!"));
 
         if (match.isStarted()){
             throw new RuntimeException("Não se pode começar uma partida já iniciada.");
@@ -88,7 +92,7 @@ public class MatchesService {
 
     @Transactional
     public void finishMatch(Integer matchId) {
-        Matches match = this.matchesRepository.findById(matchId).get();
+        Matches match = this.matchesRepository.findById(matchId).orElseThrow(() -> new RuntimeException("Essa partida não existe!"));
 
         if (match.isFinished()){
             throw new RuntimeException("Não se pode encerrar uma partida já finalizada.");
@@ -105,7 +109,7 @@ public class MatchesService {
 
     @Transactional
     public ResponseEntity<Object> matchResult(Matches match, Integer matchId){
-        Matches match1 = this.matchesRepository.findById(matchId).get();
+        Matches match1 = this.matchesRepository.findById(matchId).orElseThrow(() -> new RuntimeException("Essa partida não existe!"));
 
         if (!match1.isStarted()){throw new RuntimeException("Só é possível alterar uma partida iniciada!");}
         if (match1.isFinished()){throw new RuntimeException("Só é possível alterar uma partida não finalizada!");}

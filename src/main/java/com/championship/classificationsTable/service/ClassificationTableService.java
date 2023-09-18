@@ -30,6 +30,10 @@ public class ClassificationTableService {
         return ResponseEntity.ok(this.classificationTableRepository.findAll());
     }
 
+    public void listById(Integer championshipId){
+        this.classificationTableRepository.listByChampionship(championshipId);
+    }
+
     //CRIAR
     public void createClassificationTable(ListTeamsDto listTeamsDto){
 
