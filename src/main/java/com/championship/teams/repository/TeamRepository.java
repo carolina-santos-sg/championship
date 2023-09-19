@@ -32,11 +32,5 @@ public interface TeamRepository extends JpaRepository<Teams, Integer> {
                     " WHERE t.id = :teamId ")
     boolean countByChampionshipIdAndMatches(@Param("teamId") Integer teamId);
 
-//    @Query(nativeQuery = true,
-//                 value = " SELECT * " +
-//                         " FROM teams t " +
-//                         " JOIN classifications_table ct ON t.id = ct.team " +
-//                         " JOIN championship c ON ct.championship_id = c.id " +
-//                         " WHERE t.id = :teamId ")
-//    void listByTeamId(@Param("teamId") Integer teamId);
+
 }

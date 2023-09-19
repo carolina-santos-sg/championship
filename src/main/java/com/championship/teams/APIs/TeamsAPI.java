@@ -18,9 +18,6 @@ public class TeamsAPI {
     @GetMapping("/list")
     public ResponseEntity<Object> listTeams(){ return ResponseEntity.ok(this.teamService.listTeams()); }
 
-//    @GetMapping("/listbyid/{id}")
-//    public void listById(@PathVariable("id") Integer teamId){this.teamService.listByTeamId(teamId);}
-
     @PostMapping("/register")
     public ResponseEntity<Object> registerTeam(@RequestBody Teams team){
         return ResponseEntity.ok(this.teamService.registerTeam(team));
@@ -30,7 +27,7 @@ public class TeamsAPI {
     public void deleteTeam(@PathVariable("id") Integer teamId){this.teamService.deleteTeam(teamId);}
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Object> updateTeam(@PathVariable("id") Integer teamId){
-        return ResponseEntity.ok(this.teamService.updateTeam(teamId));
+    public ResponseEntity<Object> updateTeam(@PathVariable("id") Integer teamId, @RequestBody Teams nameTeam){
+        return ResponseEntity.ok(this.teamService.updateTeam(teamId, nameTeam));
     }
 }

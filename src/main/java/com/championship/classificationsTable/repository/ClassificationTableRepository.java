@@ -22,4 +22,5 @@ public interface ClassificationTableRepository extends JpaRepository<Classificat
                          " WHERE championship_id = :championshipId " +
                          " ORDER BY points DESC ")
     void listByChampionship(@Param("championshipId") Integer championshipId);
+
 }

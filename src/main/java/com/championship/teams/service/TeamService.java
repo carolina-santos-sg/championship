@@ -2,7 +2,6 @@ package com.championship.teams.service;
 
 import com.championship.teams.repository.TeamRepository;
 import com.championship.teams.teams.Teams;
-import com.sun.org.apache.bcel.internal.generic.PUSH;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 
 @Service
-public class TeamService { ;
+public class TeamService {
     private final TeamRepository teamRepository;
 
     public TeamService(TeamRepository teamRepository) {
@@ -20,9 +19,6 @@ public class TeamService { ;
     //LISTAR TIMES
     public ResponseEntity<Object> listTeams(){ return ResponseEntity.ok(this.teamRepository.findAll()); }
 
-//    public void listByTeamId(Integer teamId){
-//        this.teamRepository.listByTeamId(teamId);
-//    }
 
     //REGISTRAR TIMES
     @Transactional
@@ -31,7 +27,7 @@ public class TeamService { ;
             throw new RuntimeException("É preciso informar um nome!");
         }
 
-        if (this.teamRepository.countByTeamName(team.getTeamName())){
+        if (this.teamRepository.countByTeamName(team.getTeamName().toUpperCase())){
             throw new RuntimeException("Time já registrado!");
         }
 
@@ -53,18 +49,19 @@ public class TeamService { ;
 
     //ATUALIZAR
     @Transactional
-    public Teams updateTeam(Integer teamId){
-        Teams team1 = this.teamRepository.findById(teamId).get();
+    public Teams updateTeam(Integer teamId, Teams nameTeam){
 
         if(this.teamRepository.countByStartedChampionship(teamId)){
             throw new RuntimeException("Não é possível fazer a alteração, pois o time está participando de um campeonato que já começou.");
         }
 
-        if(Objects.nonNull(team1.getTeamName())){
-            team1.setTeamName(team1.getTeamName().toUpperCase());
-        }
-        if (this.teamRepository.countByTeamName(team1.getTeamName())){
+        if (this.teamRepository.countByTeamName(nameTeam.getTeamName().toUpperCase())){
             throw new RuntimeException("Time já registrado!");
+        }
+
+        Teams team1 = this.teamRepository.findById(teamId).get();
+        if(Objects.nonNull(team1.getTeamName().toUpperCase())){
+            team1.setTeamName(nameTeam.getTeamName().toUpperCase());
         }
 
         return this.teamRepository.save(team1);

@@ -44,10 +44,6 @@ public class MatchesService {
         if (matchDto.getHomeTeamId().equals(matchDto.getVisitingTeamId())){
             throw new RuntimeException("Um time não pode disputar uma partida contra si mesmo!"); }
 
-        if (!this.matchesRepository.countByChampionshipIdAndTeamId(matchDto.getChampionshipId(),matchDto.getHomeTeamId())
-                || !this.matchesRepository.countByChampionshipIdAndTeamId(matchDto.getChampionshipId(), matchDto.getVisitingTeamId())){
-            throw new RuntimeException("Não se pode realizar jogos entre times de campeonatos diferentes");
-        }
 
 
         //validações - campeonato
@@ -60,11 +56,15 @@ public class MatchesService {
             if (!this.championshipRepository.championshipStartedById(matchDto.getChampionshipId()) || this.championshipRepository.championshipFinishedById(matchDto.getChampionshipId())){
                 throw new RuntimeException("Só é possível realizar jogos em campeonatos que estejam com status inicializados e não finalizados!");
             }
+            if (!this.matchesRepository.countByChampionshipIdAndTeamId(matchDto.getChampionshipId(),matchDto.getHomeTeamId())
+                    || !this.matchesRepository.countByChampionshipIdAndTeamId(matchDto.getChampionshipId(), matchDto.getVisitingTeamId())){
+                throw new RuntimeException("Não se pode realizar jogos entre times de campeonatos diferentes");
+            }
+            if (this.matchesRepository.countByTeams(matchDto.getHomeTeamId(), matchDto.getVisitingTeamId())) {
+                throw new RuntimeException("Essa partida já aconteceu!");
+            }
         }
 
-        if (this.matchesRepository.countByTeams(matchDto.getHomeTeamId(), matchDto.getVisitingTeamId())) {
-            throw new RuntimeException("Essa partida já aconteceu!");
-        }
 
         //validação - datas
         dateValidations(matchDto);
@@ -161,7 +161,10 @@ public class MatchesService {
         Calendar minimumDate = (Calendar) Calendar.getInstance().clone();
         minimumDate.add(Calendar.DAY_OF_MONTH, 3);
 
-        if (matchDto.getMatchDate().compareTo(minimumDate) <= 0 ) { throw new RuntimeException("A partida deve acontecer em pelo menos 3 dias!"); }
+        if (matchDto.getMatchDate().compareTo(minimumDate) <= 0 ) {
+            throw new RuntimeException("A partida deve acontecer em pelo menos 3 dias, " +
+                                       "a partir da data atual!");
+        }
 
         Calendar dayBefore = (Calendar) matchDto.getMatchDate().clone();
         dayBefore.add(Calendar.DAY_OF_MONTH, -1);

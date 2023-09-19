@@ -39,11 +39,4 @@ public interface ChampionshipRepository extends JpaRepository<Championship, Inte
                          " WHERE m.championship_id = :championshipId ")
     Integer countByMatches(@Param("championshipId") Integer championshipId);
 
-//    @Query(nativeQuery = true,
-//                 value = "SELECT * " +
-//                         "FROM championship c " +
-//                         "JOIN classifications_table ct ON c.id = ct.championship_id " +
-//                         "WHERE c.id = :championshipId " +
-//                         "ORDER BY points DESC ")
-//        void listChampionshipById(@Param("championshipId") Integer championshipId);
 }

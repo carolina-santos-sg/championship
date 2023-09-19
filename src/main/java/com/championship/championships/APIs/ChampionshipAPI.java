@@ -3,8 +3,6 @@ package com.championship.championships.APIs;
 import com.championship.championships.championships.Championship;
 import com.championship.championships.service.ChampionshipService;
 import com.championship.classificationsTable.dto.ListTeamsDto;
-import com.championship.classificationsTable.service.ClassificationTableService;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/championship")
 public class ChampionshipAPI {
     private final ChampionshipService championshipService;
-    private ClassificationTableService classificationTableService;
 
     public ChampionshipAPI(ChampionshipService championshipService) {
         this.championshipService = championshipService;
@@ -22,9 +19,6 @@ public class ChampionshipAPI {
     public ResponseEntity<Object> listChampionship(){
         return ResponseEntity.ok(this.championshipService.listChampionship());
     }
-
-//    @GetMapping("/listbyid/{id}")
-//    public void listById(@PathVariable("id") Integer id){this.championshipService.listById(id);}
 
     @PostMapping("/register")
     public ResponseEntity<Object> registerChampionship(@RequestBody Championship championship){

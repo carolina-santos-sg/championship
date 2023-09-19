@@ -30,8 +30,6 @@ public class ChampionshipService {
         return ResponseEntity.ok(this.championshipRepository.findAll());
     }
 
-//    public void listById(Integer championshipId){this.championshipRepository.listChampionshipById(championshipId);}
-
     //REGISTRAR
     @Transactional
     public Championship registerChampionship( Championship championship){
