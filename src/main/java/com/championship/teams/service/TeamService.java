@@ -27,9 +27,7 @@ public class TeamService {
             throw new RuntimeException("É preciso informar um nome!");
         }
 
-        if (this.teamRepository.countByTeamName(team.getTeamName().toUpperCase())){
-            throw new RuntimeException("Time já registrado!");
-        }
+        this.existsTeam(team.getTeamName().toUpperCase());
 
         team.setTeamName(team.getTeamName().toUpperCase());
 
@@ -55,9 +53,7 @@ public class TeamService {
             throw new RuntimeException("Não é possível fazer a alteração, pois o time está participando de um campeonato que já começou.");
         }
 
-        if (this.teamRepository.countByTeamName(nameTeam.getTeamName().toUpperCase())){
-            throw new RuntimeException("Time já registrado!");
-        }
+        existsTeam(nameTeam.getTeamName().toUpperCase());
 
         Teams team1 = this.teamRepository.findById(teamId).get();
         if(Objects.nonNull(team1.getTeamName().toUpperCase())){
@@ -66,4 +62,11 @@ public class TeamService {
 
         return this.teamRepository.save(team1);
     }
+
+    private void existsTeam(String teamName){
+        if (this.teamRepository.countByTeamName(teamName)){
+            throw new RuntimeException("Time já registrado!");
+        }
+    }
+
 }

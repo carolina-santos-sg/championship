@@ -1,6 +1,7 @@
 package com.championship.matches.APIs;
 
 import com.championship.matches.dto.MatchesDto;
+import com.championship.matches.dto.UpdateScoreMatchDto;
 import com.championship.matches.matches.Matches;
 import com.championship.matches.service.MatchesService;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class MatchesAPI {
     }
 
     @PutMapping("/matchResult/{id}")
-    public ResponseEntity<Object> matchResult(@RequestBody Matches match, @PathVariable("id") Integer matchId){
-        return ResponseEntity.ok(this.matchesService.matchResult(match, matchId));
+    public ResponseEntity<Object> matchResult(@RequestBody UpdateScoreMatchDto updateScoreMatchDto, @PathVariable("id") Integer matchId){
+        return ResponseEntity.ok(this.matchesService.matchResult(updateScoreMatchDto, matchId));
     }
 }

@@ -21,6 +21,7 @@ public interface ChampionshipRepository extends JpaRepository<Championship, Inte
                          " FROM championship c " +
                          " WHERE c.id  = :championshipId ")
     boolean championshipStartedById(@Param("championshipId") Integer championshipId);
+
     @Query(nativeQuery = true,
                  value = " SELECT c.championship_finished " +
                          " FROM championship c " +
