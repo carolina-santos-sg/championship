@@ -2,15 +2,15 @@ package com.championship.classificationsTable.service;
 
 import com.championship.championships.repository.ChampionshipRepository;
 import com.championship.classificationsTable.classificationsTable.ClassificationsTable;
-import com.championship.classificationsTable.dto.ListTeamsDto;
+import com.championship.classificationsTable.dto.StartChampionshipDto;
 import com.championship.classificationsTable.repository.ClassificationTableRepository;
 
 import com.championship.teams.repository.TeamRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ClassificationTableService {
@@ -35,33 +35,44 @@ public class ClassificationTableService {
     }
 
     //CRIAR
-    public void createClassificationTable(ListTeamsDto listTeamsDto){
+    public void createClassificationTable(StartChampionshipDto startChampionshipDto){
 
-        List<Integer> teams = listTeamsDto.getTeams();
+        List<Integer> teams = startChampionshipDto.getTeams();
 
         for (Integer team : teams){
-            if (Objects.isNull(listTeamsDto.getChampionshipId())){
-                break;
-            }
 
-            if(Objects.nonNull(this.classificationTableRepository.selectByTeamAndChampionshipId(team, listTeamsDto.getChampionshipId()))){
-                throw new RuntimeException("Time já cadastrado nesse campeonato");
-            }
+            validationClassificationTable(teams);
 
-            ClassificationsTable classificationTable = new ClassificationsTable();
-
-            classificationTable.setTeam(this.teamRepository.findById(team).get());
-            classificationTable.setChampionshipId(this.championshipRepository.findById(listTeamsDto.getChampionshipId()).get());
-            classificationTable.setLoss(0);
-            classificationTable.setDraw(0);
-            classificationTable.setWin(0);
-            classificationTable.setPoints(0);
-            classificationTable.setGoalsConceded(0);
-            classificationTable.setGoalsScored(0);
-            classificationTable.setGoalsDifference(0);
+            ClassificationsTable classificationTable = this.createInitialClassificationTable(startChampionshipDto, team);
 
             this.classificationTableRepository.save(classificationTable);
         }
     }
 
+    public void validationClassificationTable(List<Integer> teams){
+
+        HashSet<Integer> listTeamsChampionship = new HashSet<>();
+
+        for (Integer team : teams){
+            if(!listTeamsChampionship.add(team)){
+                throw new RuntimeException("Time já cadastrado nesse campeonato");
+            }
+        }
+    }
+
+    private ClassificationsTable createInitialClassificationTable(StartChampionshipDto startChampionshipDto, Integer team){
+        ClassificationsTable classificationTable = new ClassificationsTable();
+
+        classificationTable.setTeam(this.teamRepository.findById(team).get());
+        classificationTable.setChampionshipId(this.championshipRepository.findById(startChampionshipDto.getChampionshipId()).get());
+        classificationTable.setLoss(0);
+        classificationTable.setDraw(0);
+        classificationTable.setWin(0);
+        classificationTable.setPoints(0);
+        classificationTable.setGoalsConceded(0);
+        classificationTable.setGoalsScored(0);
+        classificationTable.setGoalsDifference(0);
+
+        return classificationTable;
+    }
 }

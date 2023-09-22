@@ -2,7 +2,7 @@ package com.championship.championships.APIs;
 
 import com.championship.championships.championships.Championship;
 import com.championship.championships.service.ChampionshipService;
-import com.championship.classificationsTable.dto.ListTeamsDto;
+import com.championship.classificationsTable.dto.StartChampionshipDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +31,8 @@ public class ChampionshipAPI {
     }
 
     @PutMapping("/start")
-    public ResponseEntity<Object> startChampionship(@RequestBody ListTeamsDto listTeamsDto){
-        this.championshipService.startChampionship(listTeamsDto);
+    public ResponseEntity<Object> startChampionship(@RequestBody StartChampionshipDto startChampionshipDto){
+        this.championshipService.startChampionship(startChampionshipDto);
         return ResponseEntity.ok("O campeonato começou!");
     }
 

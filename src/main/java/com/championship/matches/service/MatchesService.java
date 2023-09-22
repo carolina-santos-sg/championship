@@ -4,6 +4,7 @@ import com.championship.championships.repository.ChampionshipRepository;
 import com.championship.classificationsTable.classificationsTable.ClassificationsTable;
 import com.championship.classificationsTable.repository.ClassificationTableRepository;
 import com.championship.matches.dto.MatchesDto;
+import com.championship.matches.dto.UpdateScoreMatchDto;
 import com.championship.matches.matches.Matches;
 import com.championship.matches.repository.MatchesRepository;
 import com.championship.teams.repository.TeamRepository;
@@ -32,46 +33,13 @@ public class MatchesService {
 
     @Transactional
     public ResponseEntity<Object> createMatch(MatchesDto matchDto){
-        //validações - nulas
-        if (Objects.isNull(matchDto.getHomeTeamId())){
-            throw new RuntimeException("É necessário informar o Id do time da casa!"); }
-        if (Objects.isNull(matchDto.getVisitingTeamId())){
-            throw new RuntimeException("É necessário informar o Id do time visitante!"); }
-        if (Objects.isNull(matchDto.getMatchDate())){
-            throw new RuntimeException("É necessário informar a data da partida!"); }
 
-        //validação - jogo contra si mesmo
-        if (matchDto.getHomeTeamId().equals(matchDto.getVisitingTeamId())){
-            throw new RuntimeException("Um time não pode disputar uma partida contra si mesmo!"); }
-
-
-
-        //validações - campeonato
-        if(Objects.nonNull(matchDto.getChampionshipId())) {
-            //validações - jogos de ida e volta
-            if (this.matchesRepository.countByTeamsAndChampionshipId(matchDto.getHomeTeamId(), matchDto.getVisitingTeamId(), matchDto.getChampionshipId())
-                    && this.matchesRepository.countByTeamsAndChampionshipId(matchDto.getVisitingTeamId(), matchDto.getHomeTeamId(), matchDto.getChampionshipId())) {
-                throw new RuntimeException("As partidas de ida e volta já aconteceram!");
-            }
-            if (!this.championshipRepository.championshipStartedById(matchDto.getChampionshipId()) || this.championshipRepository.championshipFinishedById(matchDto.getChampionshipId())){
-                throw new RuntimeException("Só é possível realizar jogos em campeonatos que estejam com status inicializados e não finalizados!");
-            }
-            if (!this.matchesRepository.countByChampionshipIdAndTeamId(matchDto.getChampionshipId(),matchDto.getHomeTeamId())
-                    || !this.matchesRepository.countByChampionshipIdAndTeamId(matchDto.getChampionshipId(), matchDto.getVisitingTeamId())){
-                throw new RuntimeException("Não se pode realizar jogos entre times de campeonatos diferentes");
-            }
-            if (this.matchesRepository.countByTeams(matchDto.getHomeTeamId(), matchDto.getVisitingTeamId())) {
-                throw new RuntimeException("Essa partida já aconteceu!");
-            }
-        }
-
-
-        //validação - datas
-        dateValidations(matchDto);
+        this.validationsCreateMatch(matchDto);
+        this.dateValidations(matchDto);
 
         Matches match = new Matches();
         match.setMatchDate(matchDto.getMatchDate());
-        if(Objects.nonNull(matchDto.getChampionshipId())){match.setChampionshipId(this.championshipRepository.findById(matchDto.getChampionshipId()).get());}
+        match.setChampionshipId(this.championshipRepository.findById(matchDto.getChampionshipId()).get());
         match.setHomeTeamId(this.teamRepository.findById(matchDto.getHomeTeamId()).get());
         match.setVisitingTeamId(this.teamRepository.findById(matchDto.getVisitingTeamId()).get());
 
@@ -85,6 +53,9 @@ public class MatchesService {
         if (match.isStarted()){
             throw new RuntimeException("Não se pode começar uma partida já iniciada.");
         }
+        if (match.isFinished()){
+            throw new RuntimeException("Não se pode começar uma partida já finalizada.");
+        }
 
         match.setStarted(true);
         this.matchesRepository.save(match);
@@ -94,6 +65,9 @@ public class MatchesService {
     public void finishMatch(Integer matchId) {
         Matches match = this.matchesRepository.findById(matchId).orElseThrow(() -> new RuntimeException("Essa partida não existe!"));
 
+        if (match.isStarted()){
+            throw new RuntimeException("Não se pode encerrar uma partida não iniciada.");
+        }
         if (match.isFinished()){
             throw new RuntimeException("Não se pode encerrar uma partida já finalizada.");
         }
@@ -102,21 +76,21 @@ public class MatchesService {
         this.matchesRepository.save(match);
 
         if(Objects.nonNull(match.getChampionshipId())){
-            updateClassificationTable(match);
+            this.updateClassificationTable(match);
         }
 
     }
 
     @Transactional
-    public ResponseEntity<Object> matchResult(Matches match, Integer matchId){
+    public ResponseEntity<Object> matchResult(UpdateScoreMatchDto updateScoreMatchDto, Integer matchId){
         Matches match1 = this.matchesRepository.findById(matchId).orElseThrow(() -> new RuntimeException("Essa partida não existe!"));
 
         if (!match1.isStarted()){throw new RuntimeException("Só é possível alterar uma partida iniciada!");}
         if (match1.isFinished()){throw new RuntimeException("Só é possível alterar uma partida não finalizada!");}
-        if (match.getVisitingTeamGoals() < 0|| match.getHomeTeamGoals() < 0) {throw new RuntimeException("O número de gols deve ser positivo!");}
+        if (updateScoreMatchDto.getVisitingTeamGoals() < 0|| updateScoreMatchDto.getHomeTeamGoals() < 0) {throw new RuntimeException("O número de gols deve ser positivo!");}
 
-        match1.setHomeTeamGoals(match.getHomeTeamGoals());
-        match1.setVisitingTeamGoals(match.getVisitingTeamGoals());
+        match1.setHomeTeamGoals(updateScoreMatchDto.getHomeTeamGoals());
+        match1.setVisitingTeamGoals(updateScoreMatchDto.getVisitingTeamGoals());
 
         return ResponseEntity.ok(this.matchesRepository.save(match1));
     }
@@ -150,11 +124,11 @@ public class MatchesService {
 
         classificationTableHomeTeamId.setGoalsScored(classificationTableHomeTeamId.getGoalsScored() + match.getHomeTeamGoals());
         classificationTableHomeTeamId.setGoalsConceded(classificationTableHomeTeamId.getGoalsConceded() + match.getVisitingTeamGoals());
-        classificationTableHomeTeamId.setGoalsDifference(classificationTableHomeTeamId.getGoalsScored() - classificationTableHomeTeamId.getGoalsConceded());
+        classificationTableHomeTeamId.setGoalsDifference(classificationTableHomeTeamId.getGoalsDifference() + (classificationTableHomeTeamId.getGoalsScored() - classificationTableHomeTeamId.getGoalsConceded()));
 
         classificationTableVisitingTeamId.setGoalsScored(classificationTableVisitingTeamId.getGoalsScored() + match.getVisitingTeamGoals());
         classificationTableVisitingTeamId.setGoalsConceded(classificationTableVisitingTeamId.getGoalsConceded() + match.getHomeTeamGoals());
-        classificationTableVisitingTeamId.setGoalsDifference(classificationTableVisitingTeamId.getGoalsScored() - classificationTableVisitingTeamId.getGoalsConceded());
+        classificationTableVisitingTeamId.setGoalsDifference(classificationTableVisitingTeamId.getGoalsDifference() + (classificationTableVisitingTeamId.getGoalsScored() - classificationTableVisitingTeamId.getGoalsConceded()));
     }
 
     public void dateValidations(MatchesDto matchDto){
@@ -193,6 +167,41 @@ public class MatchesService {
 
         if (this.matchesRepository.countDateByMatch(dayAfter, matchDto.getVisitingTeamId())){
             throw new RuntimeException("O time visitante já tem jogo no dia anterior!");
+        }
+    }
+
+    private void validationsCreateMatch(MatchesDto matchDto){
+        //validações - nulas
+        if (Objects.isNull(matchDto.getHomeTeamId())){
+            throw new RuntimeException("É necessário informar o Id do time da casa!"); }
+        if (Objects.isNull(matchDto.getVisitingTeamId())){
+            throw new RuntimeException("É necessário informar o Id do time visitante!"); }
+        if (Objects.isNull(matchDto.getMatchDate())){
+            throw new RuntimeException("É necessário informar a data da partida!"); }
+
+        //validação - jogo contra si mesmo
+        if (matchDto.getHomeTeamId().equals(matchDto.getVisitingTeamId())){
+            throw new RuntimeException("Um time não pode disputar uma partida contra si mesmo!"); }
+
+
+
+        //validações - campeonato
+        if(Objects.nonNull(matchDto.getChampionshipId())) {
+            //validações - jogos de ida e volta
+            if (this.matchesRepository.countByTeamsAndChampionshipId(matchDto.getHomeTeamId(), matchDto.getVisitingTeamId(), matchDto.getChampionshipId())) {
+                if (this.matchesRepository.countByTeamsAndChampionshipId(matchDto.getVisitingTeamId(), matchDto.getHomeTeamId(), matchDto.getChampionshipId())) {
+                    throw new RuntimeException("As partidas de ida e volta já aconteceram!");
+                } else {
+                    throw new RuntimeException("Essa partida já ocorreu!");
+                }
+            }
+            if (!this.championshipRepository.championshipStartedById(matchDto.getChampionshipId()) || this.championshipRepository.championshipFinishedById(matchDto.getChampionshipId())){
+                throw new RuntimeException("Só é possível realizar jogos em campeonatos que estejam com status inicializados e não finalizados!");
+            }
+            if (!this.matchesRepository.countByChampionshipIdAndTeamId(matchDto.getChampionshipId(),matchDto.getHomeTeamId())
+                    || !this.matchesRepository.countByChampionshipIdAndTeamId(matchDto.getChampionshipId(), matchDto.getVisitingTeamId())){
+                throw new RuntimeException("Não se pode realizar jogos entre times de campeonatos diferentes");
+            }
         }
     }
 }
